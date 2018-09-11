@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+  <!-- DispatcherServlet Context: defines this servlet's request-processing 
+    infrastructure -->
+
+  <!-- Enables the Spring MVC @Controller programming model -->
+  <annotation-driven />
+  <!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+    up static resources in the ${webappRoot}/resources directory -->
+  <resources mapping="/resources/**" location="/resources/" />
+
+  <!-- Resolves views selected for rendering by @Controllers to .jsp resources 
+    in the /WEB-INF/views directory -->
+  <beans:bean id="viewResolver"
+    class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <beans:property name="prefix" value="/WEB-INF/views/" />
+    <beans:property name="suffix" value=".jsp" />
+    <beans:property name="order" value="3" />
+  </beans:bean>
+
+  <!-- gng -->
+  <context:component-scan base-package="yanoll.controller" />
+  <context:component-scan base-package="yanoll.enquire.controller"></context:component-scan>
+  <context:annotation-config />
+
+
+  <!-- File up/down Setting -->
+  <beans:bean id="multipartResolver"
+    class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+  <beans:bean id="downloadView" class="yanoll.view.DownloadView" />
+  <!-- 이렇게 빈 태그로 등록해줘야 스프링컨테이너에 등록됨 -->
+  <!-- view가 클래스일 때의 리절버! -->
+  <beans:bean id="viewResolver3"
+    class="org.springframework.web.servlet.view.BeanNameViewResolver">
+    <!-- 뷰의 종류(클래스가 뷰가된 경우)가 다르니까 뷰리절버로 등록을 해줘야함 -->
+    <beans:property name="order" value="1" /> <!-- 기존 우선순위도 바꿔줘야함 -->
+  </beans:bean>
+
+
+  <!-- Aop Settiong -->
+  <!-- 네임스페이스에서 aop체크 -->
+  <aop:aspectj-autoproxy /> <!-- 프록시 생성 -->
+  <beans:bean id="sessionAspect" class="yanoll.aspect.SessionAspect"></beans:bean>
+
+  <!-- tiles setting -->
+  <beans:bean id="tilesConfigurer"
+    class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+    <beans:property name="definitions">
+      <beans:list>      <!-- xml이 어디있는지 알려주는 것 -->
+        <beans:value>/WEB-INF/tiles2def.xml</beans:value>
+      </beans:list>
+    </beans:property>
+  </beans:bean>
+
+
+  <!-- Tiles를 위한 viewresolver -->
+  <beans:bean id="viewResolver2"
+    class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+    <beans:property name="viewClass"
+      value="org.springframework.web.servlet.view.tiles3.TilesView" />
+    <!-- 우선순위 정해주기! InternalResourceViewResolver는 항상 우선순위가 마지막이어야한다. -->
+    <!-- property에 viewClass를 넣어주고 value값을 넣어준다 -->
+    <beans:property name="order" value="2" />   <!-- viewResolver가 2개니까 우선순위를 정함 -->
+  </beans:bean>
+
+
+  <!-- 파일 저장 경로 지정 -->
+  <beans:bean id="uploadPath" class="java.lang.String">
+    <beans:constructor-arg value="C:\\upload">
+    </beans:constructor-arg>
+  </beans:bean>
+
+
+
+
+</beans:beans>
